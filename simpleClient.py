@@ -66,3 +66,16 @@ def disconnect_client():
     if client_socket:
         client_socket.close()
     print("Disconnected from the server.")
+
+def close_server():
+    """Closes the server socket and performs cleanup."""
+    global server_socket
+    print("Closing the server...")
+
+    # Stop accepting new connections and close the server socket
+    if server_socket:
+        try:
+            server_socket.close()
+            print("Server socket closed.")
+        except Exception as e:
+            print(f"Error closing the server socket: {e}")

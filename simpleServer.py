@@ -5,14 +5,18 @@ HOST_IP = socket.gethostbyname(socket.gethostname())
 HOST_PORT = 12345
 ENCODER = "utf-8"
 BYTESIZE = 1024
+message_callback = None
 user_credentials = {
     "user1": "password123",
-    "admin": "adminpass"
+    "admin": "adminpass",
+    "sodahiya": "1234",
+    "harsh" : "56789",
+    "nikhil" :  "10111"
 }
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-message_callback = None
+
 
 def start_server():
     server_socket.bind((HOST_IP, HOST_PORT))

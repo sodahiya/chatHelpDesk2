@@ -2,6 +2,7 @@ import tkinter as tk
 import ttkbootstrap as ttk
 import simpleClient
 import threading
+import re
 
 window = ttk.Window(themename="cosmo")
 window.title('Helpdesk Client')
@@ -12,6 +13,38 @@ chat_message_frame = None
 message_entry = None
 canvas = None
 scrollbar = None
+
+def filter_message(message):
+    # Define a set of cuss words (expand as needed)
+    cuss_words = {"badword1", "badword2", "cussword3"}  # Replace with actual cuss words
+
+    # Split the paragraph into words using whitespace
+    words = message.split()
+
+    # Regular expression patterns to identify phone numbers and email addresses
+    phone_pattern = re.compile(r'(\b\d{10}\b|\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b)')
+    email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
+
+    # Iterate over each word and replace cuss words, phone numbers, and email addresses
+    censored_words = []
+    for word in words:
+        if phone_pattern.search(word):
+            censored_word = '*' * len(word)
+        elif email_pattern.search(word):
+            censored_word = '*' * len(word)
+        else:
+            stripped_word = ''.join(char for char in word if char.isalnum()).lower()
+            if stripped_word in cuss_words:
+                censored_word = '*' * len(stripped_word)
+                censored_word = word.replace(stripped_word, censored_word)
+            else:
+                censored_word = word
+
+        censored_words.append(censored_word)
+
+    # Rejoin the words to form the censored paragraph
+    censored_paragraph = ' '.join(censored_words)
+    return censored_paragraph
 
 def display_message_server(message):
     """Displays a message from the server."""
@@ -71,7 +104,7 @@ def connect_client():
 
 def send_message():
     """Sends a message."""
-    message = message_entry.get()
+    message = filter_message(message_entry.get())
     if message:
         simpleClient.send_message(message)
         display_message_client(message)
